@@ -107,7 +107,6 @@ def fetch_apollo_outreach():
     task_url = "https://api.apollo.io/v1/tasks/search"
     contact_url = "https://api.apollo.io/v1/contacts/search" 
     
-    # ADDED THE TWO TRACKING METRICS HERE
     metrics = {
         "Total": 0,
         "Sent": 0,
@@ -138,8 +137,8 @@ def fetch_apollo_outreach():
                 
                 # Core Metrics directly from your JSON payload
                 metrics["Delivered"] += camp.get("unique_delivered", 0)
-                metrics["Delivered (Open Tracked)"] += camp.get("unique_delivered_open_tracked", 0) # NEW
-                metrics["Delivered (Click Tracked)"] += camp.get("unique_delivered_click_tracked", 0) # NEW
+                metrics["Delivered (Open Tracked)"] += camp.get("unique_delivered_open_tracked", 0)
+                metrics["Delivered (Click Tracked)"] += camp.get("unique_delivered_click_tracked", 0)
                 metrics["Opened"] += camp.get("unique_opened", 0)
                 metrics["Clicked"] += camp.get("unique_clicked", 0)
                 metrics["Unsubscribed"] += camp.get("unique_unsubscribed", 0)
@@ -148,11 +147,14 @@ def fetch_apollo_outreach():
                 metrics["Spam Blocked"] += camp.get("unique_spam_blocked", 0)
                 metrics["Interested"] += camp.get("unique_demoed", 0)
                 
-                metrics["Sent"] += (
-                    camp.get("unique_delivered", 0) + 
-                    camp.get("unique_bounced", 0) + 
-                    camp.get("unique_spam_blocked", 0)
+                # --- BULLETPROOF SENT LOGIC ---
+                # Fallback sequentially: check unique_sent -> contacts_count -> mathematical summation
+                raw_sent = (
+                    camp.get("unique_sent") or 
+                    camp.get("contacts_count") or 
+                    (camp.get("unique_delivered", 0) + camp.get("unique_bounced", 0) + camp.get("unique_spam_blocked", 0))
                 )
+                metrics["Sent"] += raw_sent
 
             # Outsmarting Apollo: Get True Total from Contacts Endpoint
             if campaign_ids:
@@ -165,10 +167,17 @@ def fetch_apollo_outreach():
                 
                 if contact_res.status_code == 200:
                     metrics["Total"] = contact_res.json().get("pagination", {}).get("total_entries", 0)
+            
+            # --- FORCE CLEAN RELATIONSHIP CEILING ---
+            # Ensure Sent never exceeds Total contact values due to multi-step sequence inflations
+            if metrics["Sent"] > metrics["Total"] or metrics["Sent"] == 0:
+                metrics["Sent"] = metrics["Total"]
                 
             # Calculate Not Sent mathematically
             if metrics["Total"] > metrics["Sent"]:
                 metrics["Not Sent"] = metrics["Total"] - metrics["Sent"]
+            else:
+                metrics["Not Sent"] = 0
 
         else:
             st.error(f"Apollo Campaigns API Error [{camp_res.status_code}]: {camp_res.text}")

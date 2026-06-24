@@ -6,7 +6,64 @@ def apply_custom_style():
     
     custom_css = """
     <style>
-        /* Style the metric cards using native theme variables */
+        /* 1. SURGICAL HEADER DESIGN (Icon-Safe) */
+        /* Clean up structural constraints on the root header block */
+        h1 {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.03em !important;
+            padding-left: 14px;
+            margin-top: 1rem !important;
+            margin-bottom: 2rem !important;
+            border-left: 5px solid #3b82f6; 
+            border-radius: 2px;
+            
+            /* RESET parent text clip modifiers so emojis don't break */
+            -webkit-background-clip: initial !important;
+            -webkit-text-fill-color: initial !important;
+            background-clip: initial !important;
+            color: var(--text-color) !important;
+        }
+        
+        /* TARGET ONLY THE INNER TEXT STRING INSIDE THE HEADER FOR THE GRADIENT EFFECT */
+        h1 [data-testid="stHeaderBlockContent"],
+        h1 span:not(:has(img)) {
+            background: linear-gradient(135deg, #1e293b 30%, #3b82f6 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            display: inline-block;
+        }
+        
+        /* Dark Mode Override for Text String Gradient to keep contrast sharp */
+        @media (prefers-color-scheme: dark) {
+            h1 [data-testid="stHeaderBlockContent"],
+            h1 span:not(:has(img)) {
+                background: linear-gradient(135deg, #f8fafc 40%, #60a5fa 100%) !important;
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent !important;
+                background-clip: text !important;
+            }
+        }
+        
+        /* FORCE EMOJIS AND IMAGES TO IGNORE ALL CLIPPING */
+        h1 img, 
+        h1 span[role="img"],
+        h1 data-emoji,
+        [data-testid="stHeaderElement"] img {
+            -webkit-text-fill-color: initial !important;
+            -webkit-background-clip: initial !important;
+            background-clip: initial !important;
+            background: transparent !important;
+            display: inline-block !important;
+        }
+        
+        /* Remove native Streamlit header link icon anchor padding */
+        h1 a {
+            display: none !important;
+        }
+
+        /* 2. Style the metric cards */
         [data-testid="stMetric"] {
             background-color: var(--secondary-background-color);
             border: 1px solid rgba(128, 128, 128, 0.2);
@@ -35,11 +92,49 @@ def apply_custom_style():
             color: var(--text-color) !important;
         }
         
-        /* Clean up standard typography */
-        h1 {
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--secondary-background-color);
-            margin-bottom: 2rem;
+        /* 3. 3D TACTILE TABS NAVIGATION */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 12px;
+            background-color: transparent;
+            padding-bottom: 0px; 
+            border-bottom: 2px solid rgba(128, 128, 128, 0.2); 
+            align-items: flex-end; 
+        }
+        
+        .stTabs [data-baseweb="tab"] {
+            height: 46px;
+            border-radius: 8px 8px 0px 0px; 
+            padding: 10px 24px;
+            font-size: 15px !important;
+            font-weight: 600 !important;
+            color: var(--text-color);
+            background-color: rgba(128, 128, 128, 0.08) !important; 
+            border: 1px solid rgba(128, 128, 128, 0.25) !important;
+            border-bottom: none !important; 
+            box-shadow: 0 -3px 6px -1px rgba(0, 0, 0, 0.04), 0 -2px 4px -1px rgba(0, 0, 0, 0.03);
+            transform: translateY(-4px); 
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .stTabs [data-baseweb="tab"]:hover {
+            background-color: rgba(128, 128, 128, 0.15) !important;
+            transform: translateY(-6px); 
+            box-shadow: 0 -4px 8px -1px rgba(0, 0, 0, 0.08);
+        }
+        
+        .stTabs [aria-selected="true"] {
+            height: 48px !important; 
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important; 
+            color: #ffffff !important; 
+            border: 1px solid #1e40af !important;
+            border-bottom: 2px solid var(--background-color) !important; 
+            transform: translateY(2px) !important; 
+            box-shadow: none !important; 
+        }
+        
+        .stTabs [data-baseweb="tab-highlight"],
+        .stTabs [data-baseweb="tab-border"] {
+            display: none !important;
         }
     </style>
     """

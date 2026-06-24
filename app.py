@@ -4,12 +4,32 @@ from datetime import datetime
 from api import *
 from design import *
 
-# Page Configuration
+# 1. Page Configuration (Keep page_icon as a backup fallback asset)
 st.set_page_config(page_title="Dashboard", page_icon="📈", layout="wide")
-apply_custom_style()
-st.title("📈 Marketing & Operations Framework")
 
-# Fetch all live data automatically
+# 2. Inject Dynamic Stylings
+apply_custom_style()
+
+# 3. FIX: Bulletproof SaaS-style Header Block Layout
+# We wrapped this in a unique class 'main-dashboard-title' so design.py won't break it
+# --- PURE NATIVE SAAS HEADER ---
+# We use st.columns to prevent any formatting text-clipping code conflicts
+title_col1, title_col2 = st.columns([0.06, 0.94])
+
+with title_col1:
+    # Safely injects the Font Awesome stylesheet and renders the standalone vector line chart icon
+    st.markdown("""
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <div style="padding-top: 5px;">
+            <i class="fa-solid fa-rocket" style="font-size: 65px; color: #3b82f6;"></i>
+        </div>
+    """, unsafe_allow_html=True)
+
+with title_col2:
+    # Renders the clean text heading string natively so it automatically responds to dark/light modes
+    st.html("<h1 style='margin: 0; font-family: \"Inter\", sans-serif; font-weight: 800; letter-spacing: -0.02em;'>Marketing & Operations Framework</h1>")
+
+# 4. Fetch all live data automatically
 with st.spinner("Syncing live data from GoHighLevel & Apollo..."):
     user_mapping = get_user_mapping()
     contacts = fetch_contacts()
@@ -26,14 +46,13 @@ with tab1:
     
     current_date = datetime.now().strftime("%a, %d %b %Y")
     
-    # Ordered exactly like your Apollo sidebar screenshot with new tracking columns
     df_outreach = pd.DataFrame([{
         "Date": current_date,
         "Total": apollo_metrics.get("Total", 0),
         "Sent": apollo_metrics.get("Sent", 0),
         "Delivered": apollo_metrics.get("Delivered", 0),
-        "Delivered (Open Tracked)": apollo_metrics.get("Delivered (Open Tracked)", 0),     # NEW
-        "Delivered (Click Tracked)": apollo_metrics.get("Delivered (Click Tracked)", 0),   # NEW
+        "Delivered (Open Tracked)": apollo_metrics.get("Delivered (Open Tracked)", 0),     
+        "Delivered (Click Tracked)": apollo_metrics.get("Delivered (Click Tracked)", 0),   
         "Opened": apollo_metrics.get("Opened", 0),
         "Clicked": apollo_metrics.get("Clicked", 0),
         "Unsubscribed": apollo_metrics.get("Unsubscribed", 0),
@@ -51,7 +70,6 @@ with tab1:
     col3.metric("Interested", apollo_metrics.get("Interested", 0))
     col4.metric("Pending Calls", apollo_metrics.get("Pending Call Task", 0))
     
-    # Render unifying HTML Table
     html_table_outreach = render_premium_html_table(df_outreach)
     st.markdown(html_table_outreach, unsafe_allow_html=True)
 
@@ -59,7 +77,6 @@ with tab1:
 with tab2:
     st.subheader("Account Executive Roster & Lead Routing")
     
-    # 1. Calculate assigned leads dynamically
     ae_counts = {user_name: 0 for user_name in user_mapping.values()}
     unassigned_count = 0
         
@@ -69,10 +86,8 @@ with tab2:
             owner_name = user_mapping[owner_id]
             ae_counts[owner_name] += 1
         else:
-            # Count contacts that have no owner or an invalid owner
             unassigned_count += 1
 
-    # 2. Create the base DataFrame and sort it
     df_ae = pd.DataFrame({
         "AE Name": list(ae_counts.keys()),
         "AE Status": ["Active"] * len(ae_counts), 
@@ -80,7 +95,6 @@ with tab2:
     })
     df_ae = df_ae.sort_values(by="Assign Leads", ascending=False)
     
-    # 3. Append the "Unassigned" row
     unassigned_row = pd.DataFrame([{
         "AE Name": "Unassigned", 
         "AE Status": "-", 
@@ -88,7 +102,6 @@ with tab2:
     }])
     df_ae = pd.concat([df_ae, unassigned_row], ignore_index=True)
     
-    # 4. Append the "Total" row dynamically summing the column
     total_row = pd.DataFrame([{
         "AE Name": "Total", 
         "AE Status": "", 
@@ -96,7 +109,6 @@ with tab2:
     }])
     df_ae = pd.concat([df_ae, total_row], ignore_index=True)
     
-    # 5. Render unifying HTML Table
     html_table_ae = render_premium_html_table(df_ae)
     st.markdown(html_table_ae, unsafe_allow_html=True)
 
@@ -120,7 +132,6 @@ with tab3:
     
     col1, col2 = st.columns([1, 2])
     with col1:
-        # Render unifying HTML Table
         html_table_pipeline = render_premium_html_table(df_pipeline)
         st.markdown(html_table_pipeline, unsafe_allow_html=True)
     with col2:
