@@ -2,71 +2,44 @@ import streamlit as st
 import pandas as pd
 
 def apply_custom_style():
-    """Injects custom CSS to beautify the Streamlit dashboard"""
+    """Injects custom CSS to beautify the Streamlit dashboard for both Light and Dark mode"""
     
     custom_css = """
     <style>
-        /* Style the metric cards */
+        /* Style the metric cards using native theme variables */
         [data-testid="stMetric"] {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
+            background-color: var(--secondary-background-color);
+            border: 1px solid rgba(128, 128, 128, 0.2);
             border-radius: 10px;
             padding: 15px 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease;
         }
         
         [data-testid="stMetric"]:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2);
         }
         
         [data-testid="stMetricLabel"] {
             font-size: 14px !important;
             font-weight: 600 !important;
-            color: #64748b !important;
+            color: var(--text-color) !important;
+            opacity: 0.7;
             margin-bottom: 5px;
         }
         
         [data-testid="stMetricValue"] {
             font-size: 32px !important;
             font-weight: 700 !important;
-            color: #0f172a !important;
+            color: var(--text-color) !important;
         }
         
-        /* Style the navigation tabs */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 10px;
-            padding-bottom: 10px;
-        }
-        
-        .stTabs [data-baseweb="tab"] {
-            height: 45px;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 0px 20px;
-            color: #475569;
-            font-weight: 500;
-        }
-        
-        .stTabs [aria-selected="true"] {
-            background-color: #eff6ff !important;
-            border: 1px solid #3b82f6 !important;
-            color: #1d4ed8 !important;
-        }
-        
+        /* Clean up standard typography */
         h1 {
-            color: #0f172a;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #f1f5f9;
+            border-bottom: 2px solid var(--secondary-background-color);
             margin-bottom: 2rem;
-        }
-        
-        h3 {
-            color: #334155;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
         }
     </style>
     """
@@ -74,60 +47,94 @@ def apply_custom_style():
 
 def render_premium_html_table(df):
     """
-    Converts a pandas DataFrame into a beautiful, SaaS-style HTML table.
-    Smartly styles numbers and badges automatically.
+    Converts a pandas DataFrame into a beautiful HTML table that adapts to Dark/Light mode.
+    Optimized to fit wide tables (15+ columns) seamlessly on desktop.
     """
     html = """
     <style>
+        /* Responsive wrapper ensures it scrolls on mobile but fits on desktop */
+        .table-responsive-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
         .premium-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
-            font-size: 14px;
+            font-size: 13px; /* Slightly smaller font to fit more columns */
             font-family: sans-serif;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
+            color: var(--text-color);
+            background-color: var(--background-color);
         }
+        
+        /* Adaptive header */
         .premium-table thead tr {
-            background-color: #0f172a;
-            color: #ffffff;
-            text-align: left;
+            background-color: var(--secondary-background-color);
+            color: var(--text-color);
+            border-bottom: 2px solid rgba(128, 128, 128, 0.3);
         }
+        
+        /* Tighter padding to fit 15 columns on a single screen */
         .premium-table th,
         .premium-table td {
-            padding: 12px 20px;
+            padding: 8px 10px; /* Reduced from 12px 20px */
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            text-align: center; /* Center alignment saves horizontal space */
+            vertical-align: middle;
         }
+        
+        /* Keep the first column (Date/Name) left-aligned for readability */
+        .premium-table th:first-child,
+        .premium-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap; /* Prevents dates from stacking awkwardly */
+        }
+        
+        /* Base row color */
         .premium-table tbody tr {
-            border-bottom: 1px solid #e2e8f0;
-            background-color: #ffffff;
+            background-color: var(--background-color);
         }
+        
+        /* Alternating row colors using transparency */
         .premium-table tbody tr:nth-of-type(even) {
-            background-color: #f8fafc;
+            background-color: rgba(128, 128, 128, 0.05);
         }
+        
+        /* Hover effect */
         .premium-table tbody tr:hover {
-            background-color: #f1f5f9;
+            background-color: rgba(128, 128, 128, 0.1);
             transition: 0.2s ease;
         }
+        
+        /* Badges and Highlights */
         .status-badge {
-            background-color: #dcfce7;
-            color: #166534;
+            background-color: #059669; 
+            color: white;
             padding: 4px 10px;
             border-radius: 12px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
+            white-space: nowrap;
         }
         .number-highlight {
             font-weight: 700;
-            color: #3b82f6;
+            color: #3b82f6; 
         }
         .total-row {
-            background-color: #eff6ff !important;
+            background-color: rgba(59, 130, 246, 0.1) !important;
             font-weight: bold;
-            border-top: 2px solid #cbd5e1;
+        }
+        .total-row td {
+            border-top: 2px solid rgba(128, 128, 128, 0.4);
         }
     </style>
-    <div style="overflow-x: auto;">
+    <div class="table-responsive-wrapper">
         <table class="premium-table">
             <thead>
                 <tr>
@@ -140,8 +147,8 @@ def render_premium_html_table(df):
     
     # 2. Generate Table Rows dynamically
     for index, row in df.iterrows():
-        # Add a special class if this is the "Total leads" row in the pipeline
-        row_class = ' class="total-row"' if row.get("Stage") == "Total leads" else ""
+        is_total = (row.get("Stage") == "Total leads") or (row.get("AE Name") == "Total")
+        row_class = ' class="total-row"' if is_total else ""
         html += f"<tr{row_class}>"
         
         for col in df.columns:
@@ -150,7 +157,6 @@ def render_premium_html_table(df):
             # Smart Styling Logic
             if col == "AE Status" and val == "Active":
                 html += f'<td><span class="status-badge">{val}</span></td>'
-            # If the value is a number (and not a date string or name), make it blue and bold
             elif isinstance(val, (int, float)):
                 html += f'<td class="number-highlight">{val}</td>'
             else:

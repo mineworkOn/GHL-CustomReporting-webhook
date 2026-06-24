@@ -18,7 +18,7 @@ with st.spinner("Syncing live data from GoHighLevel & Apollo..."):
     apollo_metrics = fetch_apollo_outreach()
 
 # Create tabs for clean navigation
-tab1, tab2, tab3 = st.tabs(["Marketing Outreach", "AE Distribution", "Pipeline Stages"])
+tab1, tab2, tab3 = st.tabs(["Apollo Marketing Outreach", "GHL AE Distribution", "GHL Pipeline Stages"])
 
 # --- TAB 1: MARKETING OUTREACH (Live Apollo Data) ---
 with tab1:
@@ -26,24 +26,30 @@ with tab1:
     
     current_date = datetime.now().strftime("%a, %d %b %Y")
     
+    # Ordered exactly like your Apollo sidebar screenshot with new tracking columns
     df_outreach = pd.DataFrame([{
         "Date": current_date,
-        "Paused": apollo_metrics.get("Paused", 0),
-        "Not Sent": apollo_metrics.get("Not Sent", 0),
-        "Bounced": apollo_metrics.get("Bounced", 0),
-        "Spam Block Finished": apollo_metrics.get("Spam Block Finished", 0),
-        "Scheduled Delivered": apollo_metrics.get("Scheduled Delivered", 0),
+        "Total": apollo_metrics.get("Total", 0),
+        "Sent": apollo_metrics.get("Sent", 0),
         "Delivered": apollo_metrics.get("Delivered", 0),
-        "Reply": apollo_metrics.get("Reply", 0),
+        "Delivered (Open Tracked)": apollo_metrics.get("Delivered (Open Tracked)", 0),     # NEW
+        "Delivered (Click Tracked)": apollo_metrics.get("Delivered (Click Tracked)", 0),   # NEW
+        "Opened": apollo_metrics.get("Opened", 0),
+        "Clicked": apollo_metrics.get("Clicked", 0),
+        "Unsubscribed": apollo_metrics.get("Unsubscribed", 0),
+        "Replied": apollo_metrics.get("Replied", 0),
         "Interested": apollo_metrics.get("Interested", 0),
+        "Bounced": apollo_metrics.get("Bounced", 0),
+        "Spam Blocked": apollo_metrics.get("Spam Blocked", 0),
+        "Not Sent": apollo_metrics.get("Not Sent", 0),
         "Pending Call Task": apollo_metrics.get("Pending Call Task", 0)
     }])
     
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Delivered", apollo_metrics.get("Delivered", 0))
-    col2.metric("Bounced", apollo_metrics.get("Bounced", 0))
-    col3.metric("Pending Calls", apollo_metrics.get("Pending Call Task", 0))
-    col4.metric("Replies", apollo_metrics.get("Reply", 0))
+    col1.metric("Total Added", apollo_metrics.get("Total", 0))
+    col2.metric("Delivered", apollo_metrics.get("Delivered", 0))
+    col3.metric("Interested", apollo_metrics.get("Interested", 0))
+    col4.metric("Pending Calls", apollo_metrics.get("Pending Call Task", 0))
     
     # Render unifying HTML Table
     html_table_outreach = render_premium_html_table(df_outreach)
@@ -53,23 +59,44 @@ with tab1:
 with tab2:
     st.subheader("Account Executive Roster & Lead Routing")
     
+    # 1. Calculate assigned leads dynamically
     ae_counts = {user_name: 0 for user_name in user_mapping.values()}
+    unassigned_count = 0
         
     for contact in contacts:
         owner_id = contact.get("assignedTo")
         if owner_id and owner_id in user_mapping:
             owner_name = user_mapping[owner_id]
             ae_counts[owner_name] += 1
+        else:
+            # Count contacts that have no owner or an invalid owner
+            unassigned_count += 1
 
+    # 2. Create the base DataFrame and sort it
     df_ae = pd.DataFrame({
         "AE Name": list(ae_counts.keys()),
         "AE Status": ["Active"] * len(ae_counts), 
         "Assign Leads": list(ae_counts.values())
     })
-    
     df_ae = df_ae.sort_values(by="Assign Leads", ascending=False)
     
-    # Render unifying HTML Table
+    # 3. Append the "Unassigned" row
+    unassigned_row = pd.DataFrame([{
+        "AE Name": "Unassigned", 
+        "AE Status": "-", 
+        "Assign Leads": unassigned_count
+    }])
+    df_ae = pd.concat([df_ae, unassigned_row], ignore_index=True)
+    
+    # 4. Append the "Total" row dynamically summing the column
+    total_row = pd.DataFrame([{
+        "AE Name": "Total", 
+        "AE Status": "", 
+        "Assign Leads": df_ae["Assign Leads"].sum()
+    }])
+    df_ae = pd.concat([df_ae, total_row], ignore_index=True)
+    
+    # 5. Render unifying HTML Table
     html_table_ae = render_premium_html_table(df_ae)
     st.markdown(html_table_ae, unsafe_allow_html=True)
 
