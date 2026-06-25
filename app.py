@@ -42,7 +42,7 @@ with header_left:
 
 with header_right:
     theme_btn_label = "☀️ Light Mode" if IS_DARK else "🌙 Dark Mode"
-    st.button(theme_btn_label, on_click=toggle_theme, use_container_width=True)
+    st.button(theme_btn_label, on_click=toggle_theme, width="stretch")
 
 # 4. Fetch all live data automatically
 loading_placeholder = st.empty()
@@ -249,7 +249,7 @@ with tab1:
         )
         
         st.markdown('<div class="chart-wrap"><div class="chart-title">Outreach Conversion Funnel</div><div class="chart-subtitle">Conversion rates throughout the marketing campaign sequence</div>', unsafe_allow_html=True)
-        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info("No conversion funnel data available.")
@@ -409,7 +409,7 @@ with tab3:
                 )
                 
                 st.markdown('<div class="chart-wrap"><div class="chart-title">Opportunities Density Chart</div><div class="chart-subtitle">Horizontal stage breakdown mapping deal quantities</div>', unsafe_allow_html=True)
-                st.plotly_chart(fig_pipe, use_container_width=True, config={"displayModeBar": False})
+                st.plotly_chart(fig_pipe, width="stretch", config={"displayModeBar": False})
                 st.markdown('</div>', unsafe_allow_html=True)
             else:
                 st.info("No active deals in the pipeline to chart.")
