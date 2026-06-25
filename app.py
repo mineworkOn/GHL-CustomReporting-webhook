@@ -26,14 +26,14 @@ header_left, header_right = st.columns([0.8, 0.2])
 with header_left:
     st.markdown(f"""
     <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem;">
-        <div style="background: linear-gradient(135deg, #2563eb, #1d4ed8); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">
+        <div style="background: linear-gradient(135deg, #2563eb, #1d4ed8); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; flex-shrink: 0;">
             <i class="fa-solid fa-chart-line"></i>
         </div>
         <div>
-            <h1 style="margin: 0; font-size: 1.65rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <h1 class="responsive-header-title" style="margin: 0; font-size: 1.65rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; font-family: 'Plus Jakarta Sans', sans-serif;">
                 Marketing & Operations Framework
             </h1>
-            <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <p class="responsive-header-subtitle" style="margin: 0; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; font-family: 'Plus Jakarta Sans', sans-serif; flex-wrap: wrap;">
                 <span class="status-dot"></span> Active sync with GoHighLevel & Apollo &nbsp;•&nbsp; Updated just now
             </p>
         </div>
@@ -70,7 +70,8 @@ loading_placeholder.markdown("""
     border-radius: 16px !important;
     padding: 2.25rem 2.75rem !important;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-    width: 580px !important;
+    width: 90% !important;
+    max-width: 580px !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 1.25rem !important;
@@ -128,6 +129,16 @@ loading_placeholder.markdown("""
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+@media (max-width: 600px) {
+    .custom-loader-card {
+        padding: 1.5rem 1.5rem !important;
+        gap: 1rem !important;
+    }
+    .custom-loader-title {
+        font-size: 1.1rem !important;
+    }
 }
 </style>
 <div class="custom-loader-container">
@@ -244,7 +255,7 @@ with tab1:
         ))
         
         fig.update_layout(
-            **get_plotly_layout(IS_DARK, margin=dict(l=150, r=150, t=20, b=20)),
+            **get_plotly_layout(IS_DARK, margin=dict(l=60, r=60, t=20, b=20)),
             height=340
         )
         
@@ -400,7 +411,7 @@ with tab3:
                     textposition='auto',
                 ))
                 
-                pipe_layout = get_plotly_layout(IS_DARK, margin=dict(l=150, r=20, t=10, b=10))
+                pipe_layout = get_plotly_layout(IS_DARK, margin=dict(l=100, r=20, t=10, b=10))
                 pipe_layout["yaxis"]["autorange"] = "reversed"
                 
                 fig_pipe.update_layout(

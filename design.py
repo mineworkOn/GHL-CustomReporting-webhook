@@ -84,6 +84,11 @@ def apply_custom_style():
             font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
         }}
         
+        html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"], .main, section[data-testid="stMain"] {{
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }}
+        
         .block-container {{
             padding: 2.5rem 3rem 3rem !important;
             max-width: 1360px !important;
@@ -124,63 +129,73 @@ def apply_custom_style():
             position: relative !important;
         }}
         
-        button[data-baseweb="tab"] {{
+        div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"] {{
             background: transparent !important;
             color: var(--text-muted) !important;
             font-size: 0.88rem !important;
             font-weight: 500 !important;
-            padding: 0.55rem 1.2rem !important;
+            height: 40px !important;
+            padding: 0 1.2rem !important;
             border: 1px solid transparent !important;
             border-radius: 8px !important;
             font-family: 'Plus Jakarta Sans', sans-serif !important;
-            transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
-            position: relative;
-            z-index: 2 !important;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            position: relative !important;
+            z-index: 5 !important;
             opacity: 0.7;
             flex: 1 !important;
             text-align: center !important;
+            overflow: visible !important;
         }}
         
-        button[data-baseweb="tab"] p,
-        button[data-baseweb="tab"] span,
-        button[data-baseweb="tab"] div {{
+        div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"] p,
+        div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"] span,
+        div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"] div {{
             font-size: inherit !important;
             font-weight: inherit !important;
             color: inherit !important;
-            transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
             margin: 0 !important;
+            overflow: visible !important;
         }}
         
-        button[data-baseweb="tab"]:hover:not([aria-selected="true"]) {{
+        div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"]:hover:not([aria-selected="true"]) {{
             color: var(--text) !important;
             opacity: 0.95;
-            background: transparent !important;
+            transform: translateY(-1px) scale(1.02) !important;
         }}
         
-        button[data-baseweb="tab"][aria-selected="true"] {{
+        div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"][aria-selected="true"] {{
             color: #ffffff !important;
             background: transparent !important;
             border-color: transparent !important;
             font-size: 1.22rem !important;
             font-weight: 800 !important;
-            opacity: 1;
-            padding: 0.85rem 1.85rem !important;
+            opacity: 1 !important;
+            height: 48px !important;
+            padding: 0 1.85rem !important;
+            z-index: 10 !important;
+            transform: scale(1.04) !important;
+        }}
+        
+        div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"][aria-selected="true"] * {{
+            color: #ffffff !important;
         }}
         
         [data-baseweb="tab-border"] {{
             display: none !important;
         }}
         
-        [data-baseweb="tab-highlight"] {{
+        div[data-testid="stTabs"] [data-baseweb="tab-list"] [data-baseweb="tab-highlight"] {{
             display: block !important;
-            background: #2563eb !important;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
             height: calc(100% - 12px) !important;
             border-radius: 8px !important;
             z-index: 1 !important;
             bottom: 6px !important;
             top: 6px !important;
-            transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
         }}
 
         /* Smooth Tab Content Fade-in (Clean & Simple) */
@@ -560,7 +575,8 @@ def apply_custom_style():
             border-radius: 16px !important;
             padding: 2.25rem 2.75rem !important;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-            width: 580px !important;
+            width: 90% !important;
+            max-width: 580px !important;
             display: flex !important;
             flex-direction: column !important;
             gap: 1.25rem !important;
@@ -630,6 +646,125 @@ def apply_custom_style():
             to {{ opacity: 1; }}
         }}
         
+        /* 9. RESPONSIVE DESIGN MEDIA QUERIES */
+        @media (max-width: 768px) {{
+            /* Block container padding overrides */
+            .block-container {{
+                padding: 1.5rem 1rem 2rem !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }}
+            
+            /* Responsive header overrides */
+            .responsive-header-title {{
+                font-size: 1.35rem !important;
+            }}
+            .responsive-header-subtitle {{
+                font-size: 0.75rem !important;
+            }}
+            
+            /* Constrain Streamlit Tabs to prevent stretching */
+            div[data-testid="stTabs"] {{
+                max-width: 100% !important;
+                width: 100% !important;
+            }}
+            
+            div[data-testid="stTabs"] > div:first-child,
+            div[data-testid="stTabs"] > div:first-child > div,
+            div[data-testid="stTabs"] > div:first-child > div > div {{
+                max-width: 100% !important;
+                width: 100% !important;
+                min-width: 0 !important;
+                overflow: hidden !important;
+            }}
+            
+            /* Segmented Tabs Scrollable Behavior */
+            [data-baseweb="tab-list"] {{
+                overflow-x: auto !important;
+                white-space: nowrap !important;
+                flex-wrap: nowrap !important;
+                justify-content: flex-start !important;
+                max-width: 100% !important;
+                gap: 4px !important;
+                padding: 4px !important;
+                scrollbar-width: none !important; /* Firefox */
+                -ms-overflow-style: none !important; /* IE and Edge */
+            }}
+            
+            [data-baseweb="tab-list"]::-webkit-scrollbar {{
+                display: none !important; /* Hide scrollbars for Webkit */
+            }}
+            
+            div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"] {{
+                flex: 0 0 auto !important;
+                height: 34px !important;
+                padding: 0 0.9rem !important;
+                font-size: 0.78rem !important;
+                margin: 0 2px !important;
+                position: relative !important;
+                z-index: 5 !important;
+                overflow: visible !important;
+            }}
+            
+            div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"][aria-selected="true"] {{
+                font-size: 0.85rem !important;
+                height: 40px !important;
+                padding: 0 1.2rem !important;
+                transform: scale(1.03) !important;
+                color: #ffffff !important;
+                z-index: 10 !important;
+            }}
+            
+            div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"][aria-selected="true"] * {{
+                color: #ffffff !important;
+            }}
+            
+            /* Responsive Cards & Metric Elements */
+            .metric-card {{
+                padding: 1.25rem !important;
+                min-height: 100px !important;
+            }}
+            .metric-value {{
+                font-size: 1.45rem !important;
+            }}
+            .metric-label {{
+                font-size: 0.7rem !important;
+            }}
+            
+            /* Responsive Tables overrides */
+            .table-card {{
+                padding: 1rem !important;
+            }}
+            .table-title {{
+                font-size: 0.95rem !important;
+            }}
+            .table-subtitle {{
+                font-size: 0.72rem !important;
+            }}
+            .data-table {{
+                font-size: 0.75rem !important;
+            }}
+            .data-table th, .data-table td {{
+                padding: 0.6rem 0.8rem !important;
+                font-size: 0.75rem !important;
+            }}
+            .progress-container {{
+                min-width: 90px !important;
+                gap: 6px !important;
+            }}
+            .progress-bar-bg {{
+                max-width: 60px !important;
+            }}
+            
+            /* Responsive Loader */
+            .custom-loader-card {{
+                padding: 1.5rem !important;
+                gap: 1rem !important;
+            }}
+            .custom-loader-title {{
+                font-size: 1.1rem !important;
+            }}
+        }}
     </style>
     """
     st.markdown(custom_css, unsafe_allow_html=True)
