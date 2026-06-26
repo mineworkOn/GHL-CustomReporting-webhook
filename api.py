@@ -37,6 +37,7 @@ def get_user_mapping():
         st.error(f"Failed to fetch staff names: {e}")
         return {}
 
+@st.cache_data(ttl=600)
 def fetch_contacts():
     """Fetches the contacts from GHL"""
     url = "https://services.leadconnectorhq.com/contacts/search"
@@ -55,6 +56,7 @@ def fetch_contacts():
         st.error(f"API Request failed: {e}")
         return []
     
+@st.cache_data(ttl=600)
 def fetch_pipelines():
     """Fetches the pipeline structure to get stage names"""
     url = f"https://services.leadconnectorhq.com/opportunities/pipelines?locationId={LOCATION_ID}"
@@ -75,6 +77,7 @@ def fetch_pipelines():
         st.error(f"Failed to fetch pipelines: {e}")
         return {}
 
+@st.cache_data(ttl=600)
 def fetch_opportunities():
     """Fetches all opportunities (deals) in the location"""
     url = "https://services.leadconnectorhq.com/opportunities/search"
@@ -94,6 +97,7 @@ def fetch_opportunities():
         st.error(f"Failed to fetch opportunities: {e}")
         return []
 
+@st.cache_data(ttl=600)
 def fetch_apollo_outreach():
     """Fetches live marketing outreach and task data from Apollo.io"""
     headers = {

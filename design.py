@@ -15,7 +15,7 @@ def apply_custom_style():
     border = "#1e1e24" if is_dark else "#e4e4e7"
     border_subtle = "#16161a" if is_dark else "#f0f0f2"
     text = "#fafafa" if is_dark else "#09090b"
-    text_muted = "#71717a"
+    text_muted = "#a1a1aa" if is_dark else "#71717a"
     text_dim = "#52525b" if is_dark else "#a1a1aa"
     accent = "#2563eb"
     green = "#22c55e" if is_dark else "#16a34a"
@@ -82,6 +82,55 @@ def apply_custom_style():
             background-color: var(--bg) !important;
             color: var(--text) !important;
             font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+        }}
+        
+        .text-muted {{
+            color: var(--text-muted) !important;
+        }}
+        
+        .metric-delta {{
+            font-weight: 700 !important;
+            font-size: 0.8rem !important;
+        }}
+        
+        .delta-up {{
+            color: var(--green) !important;
+        }}
+        
+        .delta-down {{
+            color: var(--red) !important;
+        }}
+        
+        .delta-warn {{
+            color: var(--amber) !important;
+        }}
+        
+        .delta-normal {{
+            color: var(--text-muted) !important;
+        }}
+        
+        /* 12. SELECTBOX BASE INPUT STYLING */
+        div[data-baseweb="select"] > div {{
+            background-color: var(--card) !important;
+            border-color: var(--border) !important;
+            color: var(--text) !important;
+            transition: all 0.2s ease !important;
+        }}
+        
+        div[data-baseweb="select"] > div:hover {{
+            border-color: var(--accent) !important;
+        }}
+        
+        div[data-baseweb="select"] [data-testid="stSelectboxSelectedValue"] {{
+            color: var(--text) !important;
+        }}
+        
+        div[data-baseweb="select"] input {{
+            color: var(--text) !important;
+        }}
+        
+        div[data-baseweb="select"] svg {{
+            fill: var(--text-muted) !important;
         }}
         
         html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"], .main, section[data-testid="stMain"] {{
@@ -645,9 +694,119 @@ def apply_custom_style():
             from {{ opacity: 0; }}
             to {{ opacity: 1; }}
         }}
+
+        /* Hide mobile navigation helper container on desktop */
+        div.st-key-mobile_navigation {{
+            display: none !important;
+        }}
+        
+        /* 10. THEME TOGGLE ICON BUTTON STYLING */
+        div.st-key-theme_toggle_container {{
+            position: absolute !important;
+            top: 2.5rem !important;
+            right: 3rem !important;
+            z-index: 999999 !important;
+            width: auto !important;
+        }}
+        
+        div.st-key-theme_toggle_container button {{
+            width: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
+            max-width: 42px !important;
+            min-height: 42px !important;
+            max-height: 42px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 1.25rem !important;
+            background-color: var(--card) !important;
+            color: var(--text) !important;
+            border: 1px solid var(--border) !important;
+            cursor: pointer !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: var(--shadow) !important;
+        }}
+        
+        div.st-key-theme_toggle_container button:hover {{
+            border-color: var(--accent) !important;
+            transform: scale(1.08) !important;
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.2) !important;
+            background-color: var(--card-hover) !important;
+        }}
+        
+        div.st-key-theme_toggle_container button:active {{
+            transform: scale(0.95) !important;
+        }}
+        
+        div.st-key-theme_toggle_container button p,
+        div.st-key-theme_toggle_container button span {{
+            font-size: 1.25rem !important;
+            margin: 0 !important;
+            line-height: 1 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }}
+        
+        /* 11. SELECTBOX POPOVER & OPTIONS STYLING (DARK/LIGHT MODE ADAPTIVITY) */
+        div[data-baseweb="popover"] {{
+            background-color: var(--card) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: var(--radius) !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+        }}
+        
+        div[data-baseweb="popover"] ul {{
+            background-color: var(--card) !important;
+            border-radius: var(--radius) !important;
+            padding: 6px !important;
+        }}
+        
+        div[data-baseweb="popover"] li {{
+            background-color: var(--card) !important;
+            color: var(--text) !important;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+            padding: 10px 14px !important;
+            border-radius: 8px !important;
+            margin: 2px 0 !important;
+            font-size: 0.85rem !important;
+            transition: all 0.2s ease !important;
+        }}
+        
+        div[data-baseweb="popover"] li:hover {{
+            background-color: var(--card-hover) !important;
+            color: var(--text) !important;
+            cursor: pointer !important;
+        }}
+        
+        /* Highlight / Selected Option style */
+        div[data-baseweb="popover"] li[aria-selected="true"] {{
+            background-color: var(--accent) !important;
+            color: #ffffff !important;
+        }}
         
         /* 9. RESPONSIVE DESIGN MEDIA QUERIES */
         @media (max-width: 768px) {{
+            /* Theme Toggle Mobile Override */
+            div.st-key-theme_toggle_container {{
+                top: 1.5rem !important;
+                right: 1rem !important;
+            }}
+            
+            /* Hide desktop navigation container on mobile */
+            div.st-key-desktop_navigation {{
+                display: none !important;
+            }}
+            /* Show and style mobile navigation container on mobile */
+            div.st-key-mobile_navigation {{
+                display: block !important;
+                margin-bottom: 1.5rem !important;
+                width: 100% !important;
+            }}
+            
             /* Block container padding overrides */
             .block-container {{
                 padding: 1.5rem 1rem 2rem !important;
@@ -661,62 +820,6 @@ def apply_custom_style():
             }}
             .responsive-header-subtitle {{
                 font-size: 0.75rem !important;
-            }}
-            
-            /* Constrain Streamlit Tabs to prevent stretching */
-            div[data-testid="stTabs"] {{
-                max-width: 100% !important;
-                width: 100% !important;
-            }}
-            
-            div[data-testid="stTabs"] > div:first-child,
-            div[data-testid="stTabs"] > div:first-child > div,
-            div[data-testid="stTabs"] > div:first-child > div > div {{
-                max-width: 100% !important;
-                width: 100% !important;
-                min-width: 0 !important;
-                overflow: hidden !important;
-            }}
-            
-            /* Segmented Tabs Scrollable Behavior */
-            [data-baseweb="tab-list"] {{
-                overflow-x: auto !important;
-                white-space: nowrap !important;
-                flex-wrap: nowrap !important;
-                justify-content: flex-start !important;
-                max-width: 100% !important;
-                gap: 4px !important;
-                padding: 4px !important;
-                scrollbar-width: none !important; /* Firefox */
-                -ms-overflow-style: none !important; /* IE and Edge */
-            }}
-            
-            [data-baseweb="tab-list"]::-webkit-scrollbar {{
-                display: none !important; /* Hide scrollbars for Webkit */
-            }}
-            
-            div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"] {{
-                flex: 0 0 auto !important;
-                height: 34px !important;
-                padding: 0 0.9rem !important;
-                font-size: 0.78rem !important;
-                margin: 0 2px !important;
-                position: relative !important;
-                z-index: 5 !important;
-                overflow: visible !important;
-            }}
-            
-            div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"][aria-selected="true"] {{
-                font-size: 0.85rem !important;
-                height: 40px !important;
-                padding: 0 1.2rem !important;
-                transform: scale(1.03) !important;
-                color: #ffffff !important;
-                z-index: 10 !important;
-            }}
-            
-            div[data-testid="stTabs"] [data-baseweb="tab-list"] button[data-baseweb="tab"][aria-selected="true"] * {{
-                color: #ffffff !important;
             }}
             
             /* Responsive Cards & Metric Elements */

@@ -41,8 +41,8 @@ with header_left:
     """, unsafe_allow_html=True)
 
 with header_right:
-    theme_btn_label = "☀️ Light Mode" if IS_DARK else "🌙 Dark Mode"
-    st.button(theme_btn_label, on_click=toggle_theme, width="stretch")
+    with st.container(key="theme_toggle_container"):
+        st.button("☀️" if IS_DARK else "🌙", on_click=toggle_theme)
 
 # 4. Fetch all live data automatically
 loading_placeholder = st.empty()
@@ -161,11 +161,8 @@ apollo_metrics = fetch_apollo_outreach()
 loading_placeholder.empty()
 
 
-# Create tabs for clean navigation
-tab1, tab2, tab3 = st.tabs(["Apollo Marketing Outreach", "GHL AE Distribution", "GHL Pipeline Stages"])
-
-# --- TAB 1: MARKETING OUTREACH (Live Apollo Data) ---
-with tab1:
+# --- REPORT RENDERING FUNCTIONS ---
+def show_marketing_outreach(key_suffix=""):
     st.markdown('<div style="margin-bottom: 1.25rem;"><h3 style="margin: 0; font-size: 1.2rem; font-weight: 700;">Email & Task Outreach Tracking</h3><p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Campaign metrics and sales pipeline engagement</p></div>', unsafe_allow_html=True)
     
     current_date = datetime.now().strftime("%a, %d %b %Y")
@@ -260,14 +257,14 @@ with tab1:
         )
         
         st.markdown('<div class="chart-wrap"><div class="chart-title">Outreach Conversion Funnel</div><div class="chart-subtitle">Conversion rates throughout the marketing campaign sequence</div>', unsafe_allow_html=True)
-        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        st.plotly_chart(fig, key=f"funnel_chart_{key_suffix}", width="stretch", config={"displayModeBar": False})
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info("No conversion funnel data available.")
 
 
-# --- TAB 2: AE DISTRIBUTION (Live GHL Data) ---
-with tab2:
+
+def show_ae_distribution():
     st.markdown('<div style="margin-bottom: 1.25rem;"><h3 style="margin: 0; font-size: 1.2rem; font-weight: 700;">Account Executive Roster & Lead Routing</h3><p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Active routing logs and lead load balances across AEs</p></div>', unsafe_allow_html=True)
     
     ae_counts = {user_name: 0 for user_name in user_mapping.values()}
@@ -344,8 +341,7 @@ with tab2:
         st.info("No Account Executives found.")
 
 
-# --- TAB 3: PIPELINE STAGES (Live GHL Data) ---
-with tab3:
+def show_pipeline_health(key_suffix=""):
     st.markdown('<div style="margin-bottom: 1.25rem;"><h3 style="margin: 0; font-size: 1.2rem; font-weight: 700;">Sales Pipeline Health</h3><p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Deals volume and value mapping across stages</p></div>', unsafe_allow_html=True)
     
     stage_counts = {stage_name: 0 for stage_name in stage_mapping.values()}
@@ -420,9 +416,38 @@ with tab3:
                 )
                 
                 st.markdown('<div class="chart-wrap"><div class="chart-title">Opportunities Density Chart</div><div class="chart-subtitle">Horizontal stage breakdown mapping deal quantities</div>', unsafe_allow_html=True)
-                st.plotly_chart(fig_pipe, width="stretch", config={"displayModeBar": False})
+                st.plotly_chart(fig_pipe, key=f"pipeline_chart_{key_suffix}", width="stretch", config={"displayModeBar": False})
                 st.markdown('</div>', unsafe_allow_html=True)
             else:
                 st.info("No active deals in the pipeline to chart.")
     else:
         st.info("No pipeline stages found.")
+
+
+# --- RESPONSIVE LAYOUT ROUTING ---
+
+# 1. Desktop Layout (using premium st.tabs)
+with st.container(key="desktop_navigation"):
+    tab1, tab2, tab3 = st.tabs(["Apollo Marketing Outreach", "GHL AE Distribution", "GHL Pipeline Stages"])
+    with tab1:
+        show_marketing_outreach(key_suffix="desktop")
+    with tab2:
+        show_ae_distribution()
+    with tab3:
+        show_pipeline_health(key_suffix="desktop")
+
+# 2. Mobile Layout (using a native responsive selectbox)
+with st.container(key="mobile_navigation"):
+    selected_report = st.selectbox(
+        "Select Report",
+        options=["Apollo Marketing Outreach", "GHL AE Distribution", "GHL Pipeline Stages"],
+        key="mobile_report_selector",
+        label_visibility="collapsed"
+    )
+    st.markdown('<div style="margin-top: 1rem;"></div>', unsafe_allow_html=True)
+    if selected_report == "Apollo Marketing Outreach":
+        show_marketing_outreach(key_suffix="mobile")
+    elif selected_report == "GHL AE Distribution":
+        show_ae_distribution()
+    elif selected_report == "GHL Pipeline Stages":
+        show_pipeline_health(key_suffix="mobile")
